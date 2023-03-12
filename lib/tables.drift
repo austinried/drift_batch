@@ -1,0 +1,35 @@
+import 'models.dart';
+import 'converters.dart';
+
+CREATE TABLE albums(
+  source_id INT NOT NULL,
+  id TEXT NOT NULL,
+  artist_id TEXT,
+  name TEXT NOT NULL,
+  album_artist TEXT,
+  created DATETIME NOT NULL,
+  cover_art TEXT,
+  year INT,
+  updated_at DATETIME NOT NULL DEFAULT (strftime('%s', CURRENT_TIMESTAMP)),
+  PRIMARY KEY (source_id, id)
+) WITH Album;
+CREATE INDEX albums_source_id ON albums (source_id);
+CREATE INDEX albums_source_id_artist_id_idx ON albums (source_id, artist_id);
+
+CREATE TABLE songs(
+  source_id INT NOT NULL,
+  id TEXT NOT NULL,
+  album_id TEXT,
+  artist_id TEXT,
+  title TEXT NOT NULL,
+  album TEXT,
+  artist TEXT,
+  duration INT MAPPED BY `const DurationSecondsConverter()`,
+  track INT,
+  disc INT,
+  is_downloaded BOOLEAN NOT NULL DEFAULT 0,
+  updated_at DATETIME NOT NULL DEFAULT (strftime('%s', CURRENT_TIMESTAMP)),
+  PRIMARY KEY (source_id, id)
+) WITH Song;
+CREATE INDEX songs_source_id_album_id_idx ON songs (source_id, album_id);
+CREATE INDEX songs_source_id_artist_id_idx ON songs (source_id, artist_id);
